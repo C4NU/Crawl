@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from lxml import etree
 
 import telegram
+import time
 
 bot = telegram.Bot(token='6396401126:AAFC0BNwC8yMQPum_o7rEIhGkuJOi_Oos7w')
 chat_id = 305295334
@@ -12,9 +13,7 @@ chat_id = 305295334
 def GetXPathData(dom, string):
 	return dom.xpath(string)[0].text
 
-def GetUSDCData():
-	dataset = USDC_Cool()
-
+def GetUSDCData(dataset):
 	for coin in dataset.xpath_dict.keys():
 		text = coin + " " +GetXPathData(dataset.dom, dataset.xpath_dict[coin]) + " USDC Issued"
 		bot.sendMessage(chat_id = chat_id, text = text)
@@ -48,8 +47,12 @@ class USDC_Cool():
 		}
 
 def main():
+	dataset = USDC_Cool()
+	schedule.every(2).hours.do(GetUSDCData, dataset)
+
 	while True:
-		schedule.every(2).hours.do(GetUSDCData)
+		schedule.run_pending()
+		time.sleep(1)
 
 if __name__ == "__main__":
 	main()
