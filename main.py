@@ -17,7 +17,7 @@ def GetUSDCData():
 
 	for coin in dataset.xpath_dict.keys():
 		text = coin + " " +GetXPathData(dataset.dom, dataset.xpath_dict[coin]) + " USDC Issued"
-        bot.sendMessage(chat_id = chat_id, text = text)
+		bot.sendMessage(chat_id = chat_id, text = text)
 
 class USDC_Cool():
 	def __init__(self):
