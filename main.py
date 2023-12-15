@@ -8,18 +8,22 @@ from lxml import etree
 import telegram
 import asyncio
 
-bot = telegram.Bot(token='6396401126:AAFC0BNwC8yMQPum_o7rEIhGkuJOi_Oos7w')
-chat_id = 305295334
+from dotenv import load_dotenv
+import os
 
-asyncio.run(bot.sendMessage(chat_id=chat_id, text="Starting Bot..."))
+load_dotenv()
+token = os.environ.get('token')
+chat_id = os.environ.get('chat_id_personal')
+
+bot = telegram.Bot(token=token)
 
 def GetXPathData(dom, string):
 	return dom.xpath(string)[0].text
 
-def GetUSDCData(dataset):
+async def GetUSDCData(dataset):
 	for coin in dataset.xpath_dict.keys():
-		text = coin + " " +GetXPathData(dataset.dom, dataset.xpath_dict[coin]) + " USDC Issued"
-		asyncio.run(bot.sendMessage(chat_id = chat_id, text = text))
+		text = coin + " " + GetXPathData(dataset.dom, dataset.xpath_dict[coin]) + " USDC Issued"
+		await bot.sendMessage(chat_id=chat_id, text=text)
 
 class USDC_Cool():
 	def __init__(self):
@@ -51,7 +55,14 @@ class USDC_Cool():
 
 
 dataset = USDC_Cool()
-schedule.every(2).hours.do(GetUSDCData, dataset)
+
+async def job():
+	await GetUSDCData(dataset)
+
+def run_job():
+	asyncio.run(job())
+
+schedule.every(2).hours.do(run_job)
 
 while True:
 	schedule.run_pending()
