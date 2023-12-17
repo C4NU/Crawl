@@ -1,0 +1,6 @@
+schedule
+beautifulsoup4 
+lxml 
+requests 
+python-telegram-bot 
+python-dotenv
